@@ -21,20 +21,21 @@ namespace API.Controllers
             {
                 if (await UserExists(registerDto.Username)) return BadRequest("User name exists.  Try again.");
 
-                using var hmac = new HMACSHA512();
-                var user = new AppUser 
-                {
-                    UserName = registerDto.Username.ToLower(),
-                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-                    PasswordSalt = hmac.Key
-                };
+                return Ok();
+                // using var hmac = new HMACSHA512();
+                // var user = new AppUser 
+                // {
+                //     UserName = registerDto.Username.ToLower(),
+                //     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
+                //     PasswordSalt = hmac.Key
+                // };
 
-                await context.Users.AddAsync(user);
-                await context.SaveChangesAsync();
-                return Ok(new UserDto{
-                    Username = user.UserName,
-                    Token = tokenService.CreateToken(user)
-                });
+                // await context.Users.AddAsync(user);
+                // await context.SaveChangesAsync();
+                // return Ok(new UserDto{
+                //     Username = user.UserName,
+                //     Token = tokenService.CreateToken(user)
+                // });
             }
             catch (Exception ex)
             {                
