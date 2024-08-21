@@ -1,29 +1,114 @@
-<form #registerForm="ngForm" (ngSubmit)="register()" autocomplete="off">
+<form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
     <h2 class="text-center text-primary">Sign up</h2>
     <hr>
-    <div class="mb-3 form-floating">
-        <input
-            type="text"
-            class="form-control" 
-            name="username" 
-            [(ngModel)]="model.username" 
-            placeholder="Username"
-        >
-        <label>Username</label>
+
+    <div class="mb-3">
+        <label style="margin-right: 10px;">I am a</label>
+        <label class="form-check-label">
+            <input type="radio" class="form-check-input" value="male" formControlName="gender"> Male
+        </label>
+        <label class="form-check-label">
+            <input type="radio" class="form-check-input" value="female" formControlName="gender"> Female
+        </label>
     </div>
 
     <div class="mb-3 form-floating">
         <input
+            [class.is-invalid]="registerForm.get('username')?.errors 
+                && registerForm.get('username')?.touched"
+            type="text"
+            class="form-control" 
+            formControlName = "username"
+            placeholder="Username"
+        >
+        <label>Username</label>
+        <div class="invalid-feedback text-start">Please enter a username</div>
+    </div>
+
+    <div class="mb-3 form-floating">
+        <input
+            [class.is-invalid]="registerForm.get('knownAs')?.errors 
+                && registerForm.get('knownAs')?.touched"
+            type="text"
+            class="form-control" 
+            formControlName = "knownAs"
+            placeholder="Known As"
+        >
+        <label>Known As Nickname</label>
+        <div class="invalid-feedback text-start">Please enter a Known As Nickname</div>
+    </div>
+
+    <div class="mb-3 form-floating">
+        <input
+            [class.is-invalid]="registerForm.get('dateOfBirth')?.errors 
+                && registerForm.get('dateOfBirth')?.touched"
+            type="date"
+            class="form-control" 
+            formControlName = "dateOfBirth"
+            placeholder="Datepicker"
+        >
+        <label>Date of birth</label>
+        <div class="invalid-feedback text-start">Please enter a valid birth date for a person over 18 years</div>
+    </div>
+
+    <div class="mb-3 form-floating">
+        <input
+            [class.is-invalid]="registerForm.get('city')?.errors 
+                && registerForm.get('city')?.touched"
+            type="text"
+            class="form-control" 
+            formControlName = "city"
+            placeholder="City"
+        >
+        <label>City</label>
+        <div class="invalid-feedback text-start">Please enter a City</div>
+    </div>
+
+    <div class="mb-3 form-floating">
+        <input
+            [class.is-invalid]="registerForm.get('country')?.errors 
+                && registerForm.get('country')?.touched"
+            type="text"
+            class="form-control" 
+            formControlName = "country"
+            placeholder="Country"
+        >
+        <label>Country</label>
+        <div class="invalid-feedback text-start">Please enter a Country</div>
+    </div>
+
+    <div class="mb-3 form-floating">
+        <input
+            [class.is-invalid]="registerForm.get('password')?.errors 
+                && registerForm.get('password')?.touched"
             type="password"
             class="form-control" 
-            name="password" 
-            [(ngModel)]="model.password" 
+            formControlName = "password"
             placeholder="Password"
         >
         <label>Password</label>
+        <div *ngIf="registerForm.get('password')?.hasError('required')" 
+            class="invalid-feedback text-start">Please enter a valid password</div>
+        <div *ngIf="registerForm.get('password')?.hasError('minlength')" 
+            class="invalid-feedback text-start">Password must be at least 4 characters</div>
+        <div *ngIf="registerForm.get('password')?.hasError('maxlength')" 
+            class="invalid-feedback text-start">Password must be at no more than 8 characters</div>
     </div>
+
+    @if (validationErrors) {
+        <div class="alert alert-danger">
+            <ul>
+                @for (error of validationErrors; track $index) {
+                    <li>{{error}}</li>
+                }
+            </ul>
+        </div>
+    }
+
     <div class="form-group text-center">
         <button class="btn btn-success me-2" type="submit">Register</button>
         <button class="btn btn-default me-2" type="button" (click)="cancel()">Cancel</button>
     </div>
+
 </form>
+

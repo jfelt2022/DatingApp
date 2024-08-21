@@ -5,6 +5,7 @@ using API.Data.Migrations;
 using API.DTOs;
 using API.Entities;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,8 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers
 {
 
-    public class AccountController(DataContext context, ITokenService tokenService) : BaseApiController
+    public class AccountController(DataContext context, ITokenService tokenService, 
+        IMapper mapper) : BaseApiController
     {
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto) 
@@ -21,21 +23,21 @@ namespace API.Controllers
             {
                 if (await UserExists(registerDto.Username)) return BadRequest("User name exists.  Try again.");
 
-                return Ok();
-                // using var hmac = new HMACSHA512();
-                // var user = new AppUser 
-                // {
-                //     UserName = registerDto.Username.ToLower(),
-                //     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-                //     PasswordSalt = hmac.Key
-                // };
+                using var hmac = new HMACSHA512();
 
-                // await context.Users.AddAsync(user);
-                // await context.SaveChangesAsync();
-                // return Ok(new UserDto{
-                //     Username = user.UserName,
-                //     Token = tokenService.CreateToken(user)
-                // });
+                var user = mapper.Map<AppUser>(registerDto);
+
+                user.UserName = registerDto.Username.ToLower();
+                user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
+                user.PasswordHash = hmac.Key;
+                
+                await context.Users.AddAsync(user);
+                await context.SaveChangesAsync();
+                return Ok(new UserDto{
+                    Username = user.UserName,
+                    Token = tokenService.CreateToken(user), 
+                    KnownAs = user.KnownAs
+                });
             }
             catch (Exception ex)
             {                
@@ -66,7 +68,8 @@ namespace API.Controllers
             {
                 Username = rUser.UserName,
                 Token = tokenService.CreateToken(rUser),
-                PhotoUrl = rUser.Photos.FirstOrDefault(x => x.IsMain)?.Url
+                PhotoUrl = rUser.Photos.FirstOrDefault(x => x.IsMain)?.Url, 
+                KnownAs = rUser.KnownAs
             };
         }
 
