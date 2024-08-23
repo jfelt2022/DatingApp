@@ -1,14 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using API.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Entities;
 
-public class AppUser 
+public class AppUser : IdentityUser<int>
 {
-    public int Id { get; set; }
-    public required string UserName { get; set; }
-    public byte[] PasswordHash {get; set;} = [];
-    public byte[] PasswordSalt {get; set;} = [];
     public DateOnly DateOfBirth {get; set;}
     public required string KnownAs { get; set; }
     public DateTime Created {get; set;} = DateTime.UtcNow;
@@ -19,10 +16,6 @@ public class AppUser
     public string? LookingFor { get; set; }
     public required string City { get; set;}
     public required string Country { get; set; }
-    public ICollection<Photo> Photos { get; set; } = new List<Photo>();
-
-    // public int GetAge() 
-    // {
-    //     return DateOfBirth.CalculateAge();
-    // }
+    public ICollection<Photo> Photos { get; set; } = [];
+    public ICollection<AppUserRole> UserRoles { get; set; } = [];
 }
