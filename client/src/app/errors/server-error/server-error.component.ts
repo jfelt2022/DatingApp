@@ -13,6 +13,7 @@ export class ServerErrorComponent {
 
   constructor(private router: Router) {
     const navigation = this.router.getCurrentNavigation();
-    this.error = navigation?.extras?.state?.['error']
+    this.error = navigation?.extras?.state?.['error'];
   }
+
 }

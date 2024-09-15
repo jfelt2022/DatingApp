@@ -3,32 +3,33 @@
         <div class="col-4">
             <div class="card">
                 <img
-                    src="{{member.photoUrl || './assets/user.png'}}" 
+                    src="{{member.photoUrl || './assets/user.png'}}"
                     alt="{{member.knownAs}}"
-                    class="card-img img-thumbnail">
-            </div>
-            <div class="card-body">
-                <div>
-                    <strong>Location:</strong>
-                    <p>{{member.city}}, {{member.country}}</p>
+                    class="card-img img-thumbnail"
+                >
+                <div class="card-body">
+                    <div>
+                        <strong>Location:</strong>
+                        <p>{{member.city}}, {{member.country}}</p>
+                    </div>
+                    <div>
+                        <strong>Age:</strong>
+                        <p>{{member.age}}</p>
+                    </div>
+                    <div>
+                        <strong>Last Active:</strong>
+                        <p>{{member.lastActive}}</p>
+                    </div>
+                    <div>
+                        <strong>Member since:</strong>
+                        <p>{{member.created}}</p>
+                    </div>
                 </div>
-                <div>
-                    <strong>Age:</strong>
-                    <p>{{member.age}}</p>
-                </div>
-                <div>
-                    <strong>Last Active:</strong>
-                    <p>{{member.lastActive}}</p>
-                </div>
-                <div>
-                    <strong>Member Since:</strong>
-                    <p>{{member.created}}</p>
-                </div>
-            </div>
-            <div class="card-footer">
-                <div class="btn-group d-flex">
-                    <button class="btn btn-primary">Like</button>
-                    <button class="btn btn-success">Messages</button>
+                <div class="card-footer">
+                    <div class="btn-group d-flex">
+                        <button class="btn btn-primary">Like</button>
+                        <button class="btn btn-success">Message</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -47,12 +48,13 @@
                 </tab>
                 <tab heading="Photos" #photoTab="tab">
                     @if (photoTab.active) {
-                        <gallery 
-                        [items]="images" 
-                        [itemAutosize]="true" 
-                        class="gallery">
-                    </gallery>
+                        <gallery
+                            [items]="images"
+                            [itemAutosize]="true"
+                            class="gallery"
+                    ></gallery>
                     }
+
                 </tab>
                 <tab heading="Messages">
                     <p>Messages will go here</p>

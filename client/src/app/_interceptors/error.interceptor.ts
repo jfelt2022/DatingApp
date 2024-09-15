@@ -7,6 +7,7 @@ import { catchError } from 'rxjs';
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const toastr = inject(ToastrService);
+
   return next(req).pipe(
     catchError(error => {
       if (error) {
@@ -16,16 +17,16 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
               const modalStateErrors = [];
               for (const key in error.error.errors) {
                 if (error.error.errors[key]) {
-                  modalStateErrors.push(error.error.errors[key]);
+                  modalStateErrors.push(error.error.errors[key])
                 }
-                throw modalStateErrors.flat();
               }
+              throw modalStateErrors.flat();
             } else {
-              toastr.error(error.error, error.status);
+              toastr.error(error.error, error.status)
             }
             break;
           case 401:
-            toastr.error('Unauthorized', error.status);
+            toastr.error('Unauthorised', error.status)
             break;
           case 404:
             router.navigateByUrl('/not-found');
@@ -41,5 +42,5 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       }
       throw error;
     })
-  );
+  )
 };

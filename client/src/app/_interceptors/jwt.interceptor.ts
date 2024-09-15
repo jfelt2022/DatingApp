@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { AccountService } from '../_services/account.service';
 import { inject } from '@angular/core';
+import { AccountService } from '../_services/account.service';
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const accountService = inject(AccountService);
@@ -11,7 +11,6 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
         Authorization: `Bearer ${accountService.currentUser()?.token}`
       }
     })
-
   }
 
   return next(req);

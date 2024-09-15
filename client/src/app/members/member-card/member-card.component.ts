@@ -1,4 +1,4 @@
-import { Component, input, ViewEncapsulation } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { Member } from '../../_models/member';
 import { RouterLink } from '@angular/router';
 
@@ -10,5 +10,5 @@ import { RouterLink } from '@angular/router';
   styleUrl: './member-card.component.css'
 })
 export class MemberCardComponent {
-  member = input.required<Member>()
+  member = input.required<Member>();
 }

@@ -1,9 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MembersService } from '../../_services/members.service';
 import { ActivatedRoute } from '@angular/router';
 import { Member } from '../../_models/member';
-import { TabsetComponent, TabsModule } from 'ngx-bootstrap/tabs';
-import { Gallery, GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
+import { TabsModule } from 'ngx-bootstrap/tabs';
+import { GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
 
 @Component({
   selector: 'app-member-detail',
@@ -30,7 +30,7 @@ export class MemberDetailComponent implements OnInit {
         this.member = member;
         member.photos.map(p => {
           this.images.push(new ImageItem({src: p.url, thumb: p.url}))
-        }) 
+        })
       }
     })
   }

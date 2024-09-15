@@ -1,19 +1,18 @@
+﻿using API.Data;
 using API.DTOs;
 using API.Entities;
-using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Data;
+namespace API;
 
-public class UserRepository(DataContext context, IMapper mapper) : IUserRepository
+public class UserRepository(DataContext context, IMapper mapper) : Interfaces.IUserRepository
 {
-    public async Task<MemberDto?> GetMemberAsync(string userName)
+    public async Task<MemberDto?> GetMemberAsync(string username)
     {
-
         return await context.Users
-            .Where(x => x.NormalizedUserName == userName.ToUpper())
+            .Where(x => x.UserName == username)
             .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync();
     }
@@ -25,35 +24,40 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             .ToListAsync();
     }
 
-    async Task<AppUser?> IUserRepository.GetUserByIdAsync(int id)
+    public async Task<AppUser?> GetUserByIdAsync(int id)
     {
-        return await context.Users.Include(x => x.Photos).FirstOrDefaultAsync(x => x.Id == id);
+        return await context.Users.FindAsync(id);
     }
 
-    async Task<AppUser?> IUserRepository.GetUserByUserNameAsync(string userName)
+    public async Task<AppUser?> GetUserByUsernameAsync(string username)
     {
         return await context.Users
             .Include(x => x.Photos)
-            .SingleOrDefaultAsync(x => (x.UserName + "").ToLower() == (userName + "").ToLower());
+            .SingleOrDefaultAsync(x => x.UserName == username);
     }
 
-    async Task<IEnumerable<AppUser>> IUserRepository.GetUsersAsync()
+    public Task<AppUser?> GetUserByUserNameAsync(string userName)
+    {
+        throw new NotImplementedException();
+    }
+
+
+    public async Task<IEnumerable<AppUser>> GetUsersAsync()
     {
         return await context.Users
             .Include(x => x.Photos)
             .ToListAsync();
     }
 
-    
-
-    async Task<bool> IUserRepository.SaveAllAsync()
+    public async Task<bool> SaveAllAsync()
     {
         return await context.SaveChangesAsync() > 0;
     }
 
-    void IUserRepository.Update(AppUser user)
+    public void Update(AppUser user)
     {
         context.Entry(user).State = EntityState.Modified;
     }
 
+    
 }
