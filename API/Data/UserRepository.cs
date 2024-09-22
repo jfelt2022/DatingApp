@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Helpers;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +18,30 @@ public class UserRepository(DataContext context, IMapper mapper) : Interfaces.IU
             .SingleOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<MemberDto?>> GetMembersAsync()
+    public async Task<PagedList<MemberDto?>> GetMembersAsync(UserParams userParams)
     {
-        return await context.Users
-            .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
-            .ToListAsync();
+        var query = context.Users.AsQueryable();
+
+        query = query.Where(x => x.UserName != userParams.CurrentUserName);
+
+        if (userParams.Gender != null)
+        {
+            query = query.Where(x => x.Gender == userParams.Gender);
+        }
+
+        var minDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MaxAge-1));
+        var maxDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MinAge));
+
+        query = query.Where(x => x.DateOfBirth >= minDob && x.DateOfBirth <= maxDob);
+
+        query = userParams.OrderBy switch
+        {
+            "created" => query.OrderByDescending(x => x.Created),
+            _ => query.OrderByDescending(x => x.LastActive)
+        };
+
+        return await PagedList<MemberDto?>.CreateAsync(query.ProjectTo<MemberDto>(mapper.ConfigurationProvider), 
+            userParams.PageNumber, userParams.PageSize);
     }
 
     public async Task<AppUser?> GetUserByIdAsync(int id)
@@ -29,16 +49,11 @@ public class UserRepository(DataContext context, IMapper mapper) : Interfaces.IU
         return await context.Users.FindAsync(id);
     }
 
-    public async Task<AppUser?> GetUserByUsernameAsync(string username)
+    public async Task<AppUser?> GetUserByUserNameAsync(string userName)
     {
         return await context.Users
             .Include(x => x.Photos)
-            .SingleOrDefaultAsync(x => x.UserName == username);
-    }
-
-    public Task<AppUser?> GetUserByUserNameAsync(string userName)
-    {
-        throw new NotImplementedException();
+            .SingleOrDefaultAsync(x => x.UserName == userName);
     }
 
 
