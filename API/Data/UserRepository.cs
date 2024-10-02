@@ -13,7 +13,7 @@ public class UserRepository(DataContext context, IMapper mapper) : Interfaces.IU
     public async Task<MemberDto?> GetMemberAsync(string username)
     {
         return await context.Users
-            .Where(x => x.UserName == username)
+            .Where(x => (x.NormalizedUserName + "") == username.ToUpper())
             .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync();
     }
