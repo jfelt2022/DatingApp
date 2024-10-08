@@ -43,7 +43,7 @@ public class Seed
         var admin = new AppUser 
         {
             UserName = "admin",
-            KnownAs = "admin",
+            KnownAs = "Admin",
             Gender = "",
             City = "",
             Country = ""

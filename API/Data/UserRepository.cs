@@ -18,11 +18,11 @@ public class UserRepository(DataContext context, IMapper mapper) : Interfaces.IU
             .SingleOrDefaultAsync();
     }
 
-    public async Task<PagedList<MemberDto?>> GetMembersAsync(UserParams userParams)
+    public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
     {
         var query = context.Users.AsQueryable();
 
-        query = query.Where(x => x.UserName != userParams.CurrentUserName);
+        query = query.Where(x => x.UserName != userParams.CurrentUsername);
 
         if (userParams.Gender != null)
         {
@@ -40,7 +40,7 @@ public class UserRepository(DataContext context, IMapper mapper) : Interfaces.IU
             _ => query.OrderByDescending(x => x.LastActive)
         };
 
-        return await PagedList<MemberDto?>.CreateAsync(query.ProjectTo<MemberDto>(mapper.ConfigurationProvider), 
+        return await PagedList<MemberDto>.CreateAsync(query.ProjectTo<MemberDto>(mapper.ConfigurationProvider), 
             userParams.PageNumber, userParams.PageSize);
     }
 
@@ -49,11 +49,11 @@ public class UserRepository(DataContext context, IMapper mapper) : Interfaces.IU
         return await context.Users.FindAsync(id);
     }
 
-    public async Task<AppUser?> GetUserByUserNameAsync(string userName)
+    public async Task<AppUser?> GetUserByUsernameAsync(string username)
     {
         return await context.Users
             .Include(x => x.Photos)
-            .SingleOrDefaultAsync(x => x.UserName == userName);
+            .SingleOrDefaultAsync(x => x.UserName == username);
     }
 
 

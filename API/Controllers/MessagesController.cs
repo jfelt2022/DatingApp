@@ -15,19 +15,20 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
     IMapper mapper) : BaseApiController
 {
     [HttpPost]
-    public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto) 
+    public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto)
     {
         var username = User.GetUsername();
 
-        if (username == createMessageDto.RecipientUsername.ToLower()) return BadRequest("You cannot message yourself");
+        if (username == createMessageDto.RecipientUsername.ToLower())
+			return BadRequest("You cannot message yourself");
 
-        var sender = await userRepository.GetUserByUserNameAsync(username);
-        var recipient = await userRepository.GetUserByUserNameAsync(createMessageDto.RecipientUsername);
+        var sender = await userRepository.GetUserByUsernameAsync(username);
+        var recipient = await userRepository.GetUserByUsernameAsync(createMessageDto.RecipientUsername);
 
         if (recipient == null || sender == null || sender.UserName == null || recipient.UserName == null) 
             return BadRequest("Cannot send message at this time");
 
-        var message = new Message 
+        var message = new Message
         {
             Sender = sender,
             Recipient = recipient,
@@ -45,7 +46,7 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessagesForUser(
-        [FromQuery] MessageParams messageParams) 
+        [FromQuery]MessageParams messageParams)
     {
         messageParams.Username = User.GetUsername();
 
@@ -57,7 +58,7 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
     }
 
     [HttpGet("thread/{username}")]
-    public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessageThread(string username) 
+    public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessageThread(string username)
     {
         var currentUsername = User.GetUsername();
 
@@ -65,7 +66,7 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteMessage(int id) 
+    public async Task<ActionResult> DeleteMessage(int id)
     {
         var username = User.GetUsername();
 
@@ -85,6 +86,6 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
 
         if (await messageRepository.SaveAllAsync()) return Ok();
 
-        return BadRequest("Problem deleting message");
+        return BadRequest("Problem deleting the message");
     }
 }

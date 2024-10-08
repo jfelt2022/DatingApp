@@ -5,7 +5,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { AccountService } from '../../_services/account.service';
 import { UserParams } from '../../_models/userParams';
 import { FormsModule } from '@angular/forms';
-import { ButtonsModule } from 'ngx-bootstrap/buttons'
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
 
 @Component({
     selector: 'app-member-list',

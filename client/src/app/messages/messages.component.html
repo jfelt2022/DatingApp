@@ -1,22 +1,16 @@
 <div class="container mt-3">
-    <div class="display-flex">
+    <div class="d-flex">
         <div class="btn-group">
-            <button class="btn btn-primary"
-                btnRadio="Unread"
-                [(ngModel)]="container"
-                (click)="loadMessages()">
+            <button class="btn btn-primary" 
+                btnRadio="Unread" [(ngModel)]="container" (click)="loadMessages()">								   								 
                 Unread
             </button>
-            <button class="btn btn-primary"
-                btnRadio="Inbox"
-                [(ngModel)]="container"
-                (click)="loadMessages()">
+            <button class="btn btn-primary" 
+                btnRadio="Inbox" [(ngModel)]="container" (click)="loadMessages()">								   									 
                 Inbox
             </button>
-            <button class="btn btn-primary"
-                btnRadio="Outbox"
-                [(ngModel)]="container"
-                (click)="loadMessages()">
+            <button class="btn btn-primary" 
+                btnRadio="Outbox" [(ngModel)]="container" (click)="loadMessages()">							   								 
                 Outbox
             </button>
         </div>
@@ -46,7 +40,8 @@
                                     ? (message.recipientPhotoUrl || './assets/user.png')
                                     : (message.senderPhotoUrl || './assets/user.png')" 
                                     alt="image of user"
-                                    class="rounded-circle me-2">
+                                    class="rounded-circle me-2"
+								>
                             <strong>{{isOutbox 
                                 ? message.recipientUsername : message.senderUsername}}</strong>
                         </div>
@@ -59,8 +54,7 @@
     </table>
 }
 
-@if (messageService.paginatedResult()?.pagination && messageService.paginatedResult()?.pagination?.totalItems! > 0) 
-{
+@if (messageService.paginatedResult()?.pagination && messageService.paginatedResult()?.pagination?.totalItems! > 0) {
     <div class="d-flex justify-content-center">
         <pagination 
             [boundaryLinks]="true" 

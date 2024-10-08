@@ -7,9 +7,9 @@ import { PhotoManagementComponent } from "../photo-management/photo-management.c
 @Component({
   selector: 'app-admin-panel',
   standalone: true,
-  imports: [TabsModule, UserManagementComponent, HasRoleDirective, PhotoManagementComponent],
   templateUrl: './admin-panel.component.html',
-  styleUrl: './admin-panel.component.css'
+  styleUrl: './admin-panel.component.css',
+  imports: [TabsModule, UserManagementComponent, HasRoleDirective, PhotoManagementComponent]
 })
 export class AdminPanelComponent {
 

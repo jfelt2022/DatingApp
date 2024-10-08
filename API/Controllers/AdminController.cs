@@ -29,7 +29,7 @@ public class AdminController(UserManager<AppUser> userManager) : BaseApiControll
     [HttpPost("edit-roles/{username}")]
     public async Task<ActionResult> EditRoles(string username, string roles)
     {
-        if (string.IsNullOrEmpty(roles)) return BadRequest("you must select at leadt one role");
+        if (string.IsNullOrEmpty(roles)) return BadRequest("you must select at least one role");
 
         var selectedRoles = roles.Split(",").ToArray();
 

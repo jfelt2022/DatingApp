@@ -7,7 +7,7 @@
     <div class="container mt-3">
         <form #form="ngForm" class="d-flex mb-3" (ngSubmit)="loadMembers()">
             <div class="d-flex mx-2">
-                <label class="col-form-label">Age From: </label>
+                <label class="col-form-label">Age from: </label>
                 <input type="number" 
                     class="form-control ms-1" 
                     style="width: 70px;" 
@@ -16,7 +16,7 @@
                 >
             </div>
             <div class="d-flex mx-2">
-                <label class="col-form-label">Age To: </label>
+                <label class="col-form-label">Age to: </label>
                 <input type="number" 
                     class="form-control ms-1" 
                     style="width: 70px;" 
@@ -26,7 +26,7 @@
             </div>
             <div class="d-flex mx-2">
                 <label class="col-form-label">Show: </label>
-                <select name="gender" style="width: 130px" 
+                <select name="gender" style="width: 130px;" 
                     class="form-select ms-1"
                     [(ngModel)]="memberService.userParams().gender"
                     >
@@ -37,7 +37,7 @@
                     }
                 </select>
             </div>
-            <button class="btn btn-primary ms-1" type="submit">Apply Filters</button>
+            <button class="btn btn-primary ms-1" type="submit">Apply filters</button>
             <button (click)="resetFilters()" class="btn btn-info ms-1" type="button">Reset filters</button>
 
             <div class="col">
@@ -71,8 +71,7 @@
 
 </div>
 
-@if (memberService.paginatedResult()?.pagination) 
-{
+@if (memberService.paginatedResult()?.pagination) {
     <div class="d-flex justify-content-center">
         <pagination 
             [boundaryLinks]="true" 

@@ -19,7 +19,7 @@ export class MembersService {
   paginatedResult = signal<PaginatedResult<Member[]> | null>(null);
   memberCache = new Map();
   user = this.accountService.currentUser();
-  userParams = signal<UserParams>(new UserParams(this.user));
+  userParams = model<UserParams>(new UserParams(this.user));
 
   resetUserParams() {
     this.userParams.set(new UserParams(this.user));
@@ -44,8 +44,6 @@ export class MembersService {
       }
     })
   }
-
-
 
   getMember(username: string) {
     const member: Member = [...this.memberCache.values()]
