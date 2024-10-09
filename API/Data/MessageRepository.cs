@@ -1,4 +1,4 @@
-using System;
+using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Helpers;
@@ -7,7 +7,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Data;
+namespace API;
 
 public class MessageRepository(DataContext context, IMapper mapper) : IMessageRepository
 {
@@ -31,7 +31,7 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
         return await context.Connections.FindAsync(connectionId);
     }
 
-	public async Task<Group?> GetGroupForConnection(string connectionId)
+    public async Task<Group?> GetGroupForConnection(string connectionId)
     {
         return await context.Groups
             .Include(x => x.Connections)
@@ -57,10 +57,10 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
             .OrderByDescending(x => x.MessageSent)
             .AsQueryable();
 
-        query = messageParams.Container switch 
+        query = messageParams.Container switch
         {
             "Inbox" => query.Where(x => x.Recipient.UserName == messageParams.Username 
-                && x.RecipientDeleted == false), 
+                && x.RecipientDeleted == false),
             "Outbox" => query.Where(x => x.Sender.UserName == messageParams.Username 
                 && x.SenderDeleted == false),
             _ => query.Where(x => x.Recipient.UserName == messageParams.Username && x.DateRead == null 
@@ -75,7 +75,7 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
 
     public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername)
     {
-        var messages = await context.Messages
+        var query = context.Messages
             .Where(x => 
                 x.RecipientUsername == currentUsername 
                     && x.RecipientDeleted == false 
@@ -83,30 +83,23 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
                 x.SenderUsername == currentUsername 
                     && x.SenderDeleted == false 
                     && x.RecipientUsername == recipientUsername
-			)
+            )
             .OrderBy(x => x.MessageSent)
-            .ProjectTo<MessageDto>(mapper.ConfigurationProvider)
-            .ToListAsync();
+            .AsQueryable();
 
-        var unreadMessages = messages.Where(x => x.DateRead == null && 
+        var unreadMessages = query.Where(x => x.DateRead == null && 
             x.RecipientUsername == currentUsername).ToList();
 
         if (unreadMessages.Count != 0)
         {
             unreadMessages.ForEach(x => x.DateRead = DateTime.UtcNow);
-            await context.SaveChangesAsync();
         }
 
-        return messages;
+        return await query.ProjectTo<MessageDto>(mapper.ConfigurationProvider).ToListAsync();
     }
 
     public void RemoveConnection(Connection connection)
     {
         context.Connections.Remove(connection);
-    }
-
-    public async Task<bool> SaveAllAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
     }
 }
