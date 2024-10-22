@@ -1,1 +1,5 @@
-{}
+{
+    "codedeploy.isApplicationWorkspace": false,
+    "appService.defaultWebAppToDeploy": "/subscriptions/2273be44-dd6b-4670-8a30-b4e072098e38/resourceGroups/test-jfdev-resources/providers/Microsoft.Web/sites/test-jfdev",
+    "appService.deploySubpath": "API\\bin\\Publish"
+}

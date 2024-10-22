@@ -13,10 +13,13 @@ public static class ApplicationServiceExtensions
         IConfiguration config)
     {
         services.AddControllers();
-        services.AddDbContext<DataContext>(opt =>
-        {
-            opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
-        });
+
+        var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
+        var connectionString = config.GetConnectionString("DefaultConnection");
+        services.AddDbContext<DataContext>(
+            DbContextOptions => DbContextOptions
+                .UseSqlServer(config.GetConnectionString("DefaultConnection"))
+            );
         services.AddCors();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUserRepository, UserRepository>();

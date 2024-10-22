@@ -18,7 +18,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
-    .WithOrigins("http://localhost:4200", "https://localhost:4200"));
+    .WithOrigins("http://localhost:4200", "https://localhost:4200", "https://staging.d30r7u2fzq962n.amplifyapp.com"));
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -36,6 +36,7 @@ using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 try
 {
+    
     var context = services.GetRequiredService<DataContext>();
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
