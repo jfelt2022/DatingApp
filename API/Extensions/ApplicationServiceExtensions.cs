@@ -1,4 +1,5 @@
-﻿using API.Data;
+﻿using System.Security.Principal;
+using API.Data;
 using API.Helpers;
 using API.Interfaces;
 using API.Services;
@@ -15,6 +16,7 @@ public static class ApplicationServiceExtensions
         services.AddControllers();
 
         var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
+       
         var connectionString = config.GetConnectionString("DefaultConnection");
         services.AddDbContext<DataContext>(
             DbContextOptions => DbContextOptions

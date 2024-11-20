@@ -13,11 +13,18 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, 
     public DbSet<Message> Messages { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<Connection> Connections { get; set; }
+    public DbSet<Client> Clients { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
 
         base.OnModelCreating(builder);
+
+        builder.Entity<Client>()
+            .HasMany(u => u.AppUsers)
+            .WithOne(x => x.Client)
+            .HasForeignKey(y => y.ClientId);
 
         builder.Entity<AppUser>()
             .HasMany(ur => ur.UserRoles)
