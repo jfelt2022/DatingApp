@@ -6,28 +6,27 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.DTOs;
 using API.Data;
-using API.Extensions;
-using API.Helpers;
-using API.Interfaces;
-using AutoMapper;
 
 namespace API.Controllers;
-public class ClientAdminController(UserManager<AppUser> userManager) : BaseApiController
+public class ClientAdminController(UserManager<AppUser> _userManager) : BaseApiController
 {
     [Authorize(Policy = "RequireAdminRole")]
     [HttpGet("admin-users")]
-    public async Task<ActionResult> GetAdminUsers() 
+    public async Task<ActionResult<IEnumerable<AdminUserDto>>> GetAdminUsers() 
     {
-        var users = await userManager.Users
-            .OrderBy(x => x.UserName)
-            .Where(x => x.UserRoles.Any(y => y.Role.NormalizedName == "ADMIN") || x.UserRoles.Any(y => y.Role.NormalizedName == "CLIENTADMIN"))
-            .Select(x => new
+        var users = await _userManager.Users
+            .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+            .Where(u => u.UserRoles.Any(r => 
+                r.Role.NormalizedName == "ADMIN" || 
+                r.Role.NormalizedName == "CLIENTADMIN"))
+            .OrderBy(u => u.UserName)
+            .Select(u => new AdminUserDto
             {
-                x.Id,
-                Username = x.UserName,
-                Roles = x.UserRoles
-                    .Select(r => r.Role.Name)
-                    .ToList()
+                Id = u.Id,
+                Username = u.UserName,
+                Roles = u.UserRoles
+                    .Select(r => r.Role.Name).ToList()
             })
             .ToListAsync();
         
@@ -35,27 +34,33 @@ public class ClientAdminController(UserManager<AppUser> userManager) : BaseApiCo
     }
 
     [HttpPost("create-client")]
-    public async Task<ActionResult<ClientDto>> CreateClient(DataContext context, CreateClientDto createClientDto)
+    public async Task<ActionResult<ClientDto>> CreateClient(
+        [FromServices] DataContext context, 
+        [FromBody] CreateClientDto createClientDto)
     {
-        var rClient = await context.Clients
-            .FirstOrDefaultAsync(x => x.ClientName == createClientDto.ClientName);
+        if (await context.Clients.AnyAsync(c => c.ClientName == createClientDto.ClientName))
+            return BadRequest($"Client Name {createClientDto.ClientName} already exists!");
 
-        if (rClient != null)
-			return BadRequest("Client Name " +  createClientDto.ClientName + " already exists!");
-
-        rClient = new Client
+        var newClient = new Client
         {
             ClientName = createClientDto.ClientName
         };
-        await context.Clients.AddAsync(rClient);
+
+        context.Clients.Add(newClient);
         await context.SaveChangesAsync();
         
-        var results = new ClientDto{
-            Id = rClient.Id,
-            ClientName = rClient.ClientName,
-            ClientUsers = rClient.AppUsers
-        };
+        return Ok(new ClientDto {
+            Id = newClient.Id,
+            ClientName = newClient.ClientName,
+            ClientUsers = newClient.AppUsers
+        });
+    }
 
-        return Ok(results);
+    // DTOs for better separation of concerns
+    public class AdminUserDto
+    {
+        public int Id { get; set; }
+        public string? Username { get; set; }
+        public List<string?>? Roles { get; set; }
     }
 }
