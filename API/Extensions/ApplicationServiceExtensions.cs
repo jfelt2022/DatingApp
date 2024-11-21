@@ -14,8 +14,6 @@ public static class ApplicationServiceExtensions
         IConfiguration config)
     {
         services.AddControllers();
-
-        var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
        
         var connectionString = config.GetConnectionString("DefaultConnection");
         services.AddDbContext<DataContext>(

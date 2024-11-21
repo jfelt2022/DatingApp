@@ -5,7 +5,6 @@ namespace API.Entities;
 
 public class AppUser : IdentityUser<int>
 {
-    public int? ClientId { get; set; }
     public DateOnly DateOfBirth { get; set; }
     public required string KnownAs { get; set; }
     public DateTime Created { get; set; } = DateTime.UtcNow;
@@ -23,6 +22,6 @@ public class AppUser : IdentityUser<int>
     public List<Message> MessagesReceived { get; set; } = [];
 
     public ICollection<AppUserRole> UserRoles { get; set; } = [];
-    public Client Client { get; set; } = null!;
+    
 
 }

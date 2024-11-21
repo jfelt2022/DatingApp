@@ -9,22 +9,17 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, 
     IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>, IdentityRoleClaim<int>, 
     IdentityUserToken<int>>(options)
 {
-    public DbSet<UserLike> Likes { get; set; }
-    public DbSet<Message> Messages { get; set; }
-    public DbSet<Group> Groups { get; set; }
-    public DbSet<Connection> Connections { get; set; }
-    public DbSet<Client> Clients { get; set; }
+    public DbSet<UserLike> Likes { get; set; } = null!;
+    public DbSet<Message> Messages { get; set; } = null!;
+    public DbSet<Group> Groups { get; set; } = null!;
+    public DbSet<Connection> Connections { get; set; } = null!;
+    public DbSet<Client> Clients { get; set; } = null!;
 
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
 
         base.OnModelCreating(builder);
-
-        builder.Entity<Client>()
-            .HasMany(u => u.AppUsers)
-            .WithOne(x => x.Client)
-            .HasForeignKey(y => y.ClientId);
 
         builder.Entity<AppUser>()
             .HasMany(ur => ur.UserRoles)

@@ -38,7 +38,7 @@ public class ClientAdminController(UserManager<AppUser> _userManager) : BaseApiC
         [FromServices] DataContext context, 
         [FromBody] CreateClientDto createClientDto)
     {
-        if (await context.Clients.AnyAsync(c => c.ClientName == createClientDto.ClientName))
+        if (context.Clients != null && await context.Clients.AnyAsync(c => c.ClientName == createClientDto.ClientName))
             return BadRequest($"Client Name {createClientDto.ClientName} already exists!");
 
         var newClient = new Client
@@ -46,13 +46,12 @@ public class ClientAdminController(UserManager<AppUser> _userManager) : BaseApiC
             ClientName = createClientDto.ClientName
         };
 
-        context.Clients.Add(newClient);
+        await context.Clients!.AddAsync(newClient);
         await context.SaveChangesAsync();
         
         return Ok(new ClientDto {
             Id = newClient.Id,
-            ClientName = newClient.ClientName,
-            ClientUsers = newClient.AppUsers
+            ClientName = newClient.ClientName
         });
     }
 
